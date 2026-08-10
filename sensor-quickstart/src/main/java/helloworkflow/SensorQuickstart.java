@@ -1,3 +1,4 @@
+// 1. Create the Java source file
 package helloworkflow;
 
 import io.temporal.activity.ActivityInterface;
