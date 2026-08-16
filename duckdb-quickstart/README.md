@@ -2,6 +2,8 @@
 
 The simplest **Temporal**-plus-**[DuckDB](https://duckdb.org)** scenario in Java, in a single file: a Workflow orchestrating durable steps that read data and persist it into an embedded DuckDB database, then run one analytical query over the result.
 
+https://github.com/user-attachments/assets/d446651b-125c-44ae-812c-e825e5d4de46
+
 ## Why this sample?
 
 Ingest pipelines fail in the middle. The interesting question is what happens then: do you re-read data you already stored, write duplicate rows, or lose progress entirely? This sample shows how Temporal answers that with no recovery code of your own.
