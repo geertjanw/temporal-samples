@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>fraud-detection-temporal</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>Credit Card Fraud Detection with Temporal</name>
+    <description>
+        Deep Netts credit card fraud detection (github.com/deepnetts/CreditCardFraudDetection)
+        orchestrated with Temporal.io durable workflows.
+    </description>
+
+    <properties>
+        <maven.compiler.release>11</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <temporal.version>1.25.2</temporal.version>
+        <deepnetts.version>1.13.2</deepnetts.version>
+    </properties>
+
+    <dependencies>
+        <!-- Deep Netts community edition (same as the CreditCardFraudDetection repo) -->
+        <dependency>
+            <groupId>com.deepnetts</groupId>
+            <artifactId>deepnetts-core</artifactId>
+            <version>${deepnetts.version}</version>
+        </dependency>
+
+        <!-- Temporal Java SDK -->
+        <dependency>
+            <groupId>io.temporal</groupId>
+            <artifactId>temporal-sdk</artifactId>
+            <version>${temporal.version}</version>
+        </dependency>
+
+        <!-- Simple SLF4J binding so Temporal/worker logs are visible -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.13</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Run with: mvn compile exec:java -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <mainClass>com.example.fraud.FraudDetectionApp</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
