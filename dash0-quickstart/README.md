@@ -1,4 +1,4 @@
-# Observable Durable Ingest with Dash0 in Java
+# Dash0 Quickstart
 
 The DuckDB ingest scenario made observable: **Temporal** durable workflows instrumented with **OpenTelemetry**, exporting workflow, activity, and database traces via OTLP to **[Dash0](https://www.dash0.com)** — in a single file.
 

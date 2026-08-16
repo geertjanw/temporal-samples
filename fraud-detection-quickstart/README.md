@@ -1,4 +1,4 @@
-# Credit Card Fraud Detection with Temporal.io
+# Fraud Detection Quickstart
 
 Combines the **Deep Netts** neural network from [deepnetts/CreditCardFraudDetection](https://github.com/deepnetts/CreditCardFraudDetection) with **[Temporal.io](https://temporal.io)** durable workflows, in a single Java source file.
 

@@ -1,8 +1,8 @@
-# Shiro + Temporal Demo
+# Shiro Quickstart
 
 A minimal Maven project showing how to combine **Apache Shiro** (authentication/authorization) with **Temporal** (durable workflows).
 
-## Why combine Shiro and Temporal?
+## Why this sample?
 
 Temporal solves *reliability*: workflows survive process crashes, retry failed steps automatically, and can run for days or months. But Temporal deliberately has no opinion about *who* is allowed to do *what* — any code that can reach the server can start workflows, and activities execute with whatever privileges the worker process has.
 
@@ -15,59 +15,61 @@ Combining them gives you durable business processes that still enforce per-user 
 - **Retries don't become privilege-escalation loops.** Authorization denials are thrown as *non-retryable* failures, so Temporal records the denial in the workflow history instead of hammering the check.
 - **Auditability for free.** Temporal's event history durably records which principal each workflow ran as and exactly where a denial happened — visible in the Web UI.
 
-The demo distills this into three enforcement points:
+## How it works
+
+Security is enforced at three points:
 
 1. **Edge (client):** the user logs in via Shiro (`shiro.ini` realm). Starting the workflow requires the `order:submit` permission.
 2. **Transit (workflow):** only the *principal name* is carried in the workflow input. No passwords, tokens, or Shiro sessions — workflow inputs are persisted in Temporal's event history. Workflow code itself makes **no** Shiro calls, keeping it deterministic.
 3. **Activities (workers):** the privileged `approveOrder` activity re-hydrates a Shiro `Subject` from the propagated username and checks `order:approve`. A denial throws a **non-retryable** `ApplicationFailure` (retrying won't grant permissions).
 
-## Users
+Key classes:
+
+- `com.example.security.ShiroSecurity` — Shiro bootstrap, edge login, and `subjectFor(username)` used by activities to check permissions for a propagated principal.
+- `com.example.workflow.OrderWorkflowImpl` — deterministic orchestration: validate → approve → fulfill.
+- `com.example.workflow.OrderActivitiesImpl` — the activities, including the Shiro permission check.
+- `com.example.App` — starts a worker and runs three scenarios; picks test vs. real server via `-Dtemporal.mode`.
+
+Demo users (from `shiro.ini`):
 
 | User  | Password    | Role  | Permissions         |
 |-------|-------------|-------|---------------------|
 | alice | secret123   | admin | `order:*`           |
 | bob   | password123 | clerk | `order:submit` only |
 
-## Scenarios
+The pom includes `jcl-over-slf4j`: Shiro 2.x's INI parsing uses commons-beanutils, which needs the commons-logging API at runtime; the bridge provides it and routes it through SLF4J.
 
-Three scenarios run on every execution:
+## Run
 
-1. `alice` — submits and approves → workflow succeeds.
-2. `bob` — may submit, but `approveOrder` fails with `AccessDenied` inside the workflow.
-3. `bob` with wrong password — Shiro rejects the login at the edge; the workflow never starts.
-
-## Run — quick mode (default)
-
-In-process Temporal test server: nothing to install, but **no Web UI**.
+**Quick mode (default)** — in-process Temporal test server, nothing to install, no Web UI:
 
 ```bash
 mvn compile exec:java
 ```
 
-In NetBeans this is plain **Run Project (F6)** / **Debug Project** (wired up in `nbactions.xml`).
+**Server mode** — visible in the Temporal Web UI. Start a local dev server ([Temporal CLI](https://docs.temporal.io/cli), macOS: `brew install temporal`):
 
-## Run — server mode (with Web UI)
+```bash
+temporal server start-dev
+```
 
-1. Install the [Temporal CLI](https://docs.temporal.io/cli) (macOS: `brew install temporal`).
-2. Start a local dev server and leave it running:
-   ```bash
-   temporal server start-dev
-   ```
-   (Add `--db-filename temporal.db` if you want workflow history to survive restarts.)
-3. Run the demo against it:
-   ```bash
-   mvn compile exec:java -Dtemporal.mode=server
-   ```
-   In NetBeans: right-click the project → **Run Maven → Run (Temporal server + Web UI)** — a debug variant is there too.
-4. Open http://localhost:8233.
+(Add `--db-filename temporal.db` if you want workflow history to survive restarts.) Then:
 
-In the Web UI you'll see `order-ORD-1001-<timestamp>` (**Completed**) and `order-ORD-1002-<timestamp>` (**Failed** — open its event history to find the `AccessDenied` `ApplicationFailure` with zero retries). ORD-1003 never appears because Shiro rejects the login before a workflow is started. Workflow IDs get a timestamp suffix in server mode so repeated runs don't collide.
+```bash
+mvn compile exec:java -Dtemporal.mode=server
+```
 
-## Project notes
+In **Apache NetBeans** (wired up in `nbactions.xml`): *Run Project (F6)* / *Debug Project* run quick mode; right-click the project → *Run Maven → Run (Temporal server + Web UI)* runs server mode — a debug variant is there too.
 
-- `com.example.security.ShiroSecurity` — Shiro bootstrap, edge login, and `subjectFor(username)` used by activities to check permissions for a propagated principal.
-- `com.example.App` — starts a worker and runs the three scenarios; picks test vs. real server via `-Dtemporal.mode`.
-- The pom includes `jcl-over-slf4j`: Shiro 2.x's INI parsing uses commons-beanutils, which needs the commons-logging API at runtime; the bridge provides it and routes it through SLF4J.
+## What you'll see
+
+Three scenarios run on every execution:
+
+1. `alice` — submits and approves → `WORKFLOW OK`, all three activities succeed.
+2. `bob` — may submit, but `approveOrder` fails → `WORKFLOW FAILED` with the `AccessDenied` message.
+3. `bob` with wrong password — `LOGIN FAILED`; Shiro rejects at the edge and no workflow starts.
+
+In server mode, open http://localhost:8233: `order-ORD-1001-<timestamp>` shows **Completed** and `order-ORD-1002-<timestamp>` shows **Failed** — open its event history to find the `AccessDenied` `ApplicationFailure` with zero retries. ORD-1003 never appears because Shiro rejected the login before a workflow was started. Workflow IDs get a timestamp suffix in server mode so repeated runs don't collide.
 
 ## Going to production
 

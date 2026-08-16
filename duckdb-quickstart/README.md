@@ -1,4 +1,4 @@
-# Durable Ingest into DuckDB in Java
+# DuckDB Quickstart
 
 The simplest **Temporal**-plus-**[DuckDB](https://duckdb.org)** scenario in Java, in a single file: a Workflow orchestrating durable steps that read data and persist it into an embedded DuckDB database, then run one analytical query over the result.
 
