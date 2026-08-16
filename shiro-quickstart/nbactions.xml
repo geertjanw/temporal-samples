@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+    <!-- F6 / Run Project: quick mode (in-process test server, no Web UI) -->
+    <action>
+        <actionName>run</actionName>
+        <packagings>
+            <packaging>jar</packaging>
+        </packagings>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:3.6.3:exec</goal>
+        </goals>
+        <properties>
+            <exec.vmArgs></exec.vmArgs>
+            <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
+            <exec.appArgs></exec.appArgs>
+            <exec.mainClass>com.example.App</exec.mainClass>
+            <exec.executable>java</exec.executable>
+        </properties>
+    </action>
+
+    <!-- Debug Project: quick mode under the debugger -->
+    <action>
+        <actionName>debug</actionName>
+        <packagings>
+            <packaging>jar</packaging>
+        </packagings>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:3.6.3:exec</goal>
+        </goals>
+        <properties>
+            <exec.vmArgs>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
+            <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
+            <exec.appArgs></exec.appArgs>
+            <exec.mainClass>com.example.App</exec.mainClass>
+            <exec.executable>java</exec.executable>
+            <jpda.listen>true</jpda.listen>
+        </properties>
+    </action>
+
+    <!-- Right-click project > Run Maven > "Run (Temporal server + Web UI)"
+         Requires `temporal server start-dev` running; Web UI at http://localhost:8233 -->
+    <action>
+        <actionName>CUSTOM-Run (Temporal server + Web UI)</actionName>
+        <displayName>Run (Temporal server + Web UI)</displayName>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:3.6.3:exec</goal>
+        </goals>
+        <properties>
+            <exec.vmArgs>-Dtemporal.mode=server</exec.vmArgs>
+            <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
+            <exec.appArgs></exec.appArgs>
+            <exec.mainClass>com.example.App</exec.mainClass>
+            <exec.executable>java</exec.executable>
+        </properties>
+    </action>
+
+    <!-- Right-click project > Run Maven > "Debug (Temporal server + Web UI)" -->
+    <action>
+        <actionName>CUSTOM-Debug (Temporal server + Web UI)</actionName>
+        <displayName>Debug (Temporal server + Web UI)</displayName>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:3.6.3:exec</goal>
+        </goals>
+        <properties>
+            <exec.vmArgs>-Dtemporal.mode=server -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
+            <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
+            <exec.appArgs></exec.appArgs>
+            <exec.mainClass>com.example.App</exec.mainClass>
+            <exec.executable>java</exec.executable>
+            <jpda.listen>true</jpda.listen>
+        </properties>
+    </action>
+</actions>
