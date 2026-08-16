@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  NetBeans custom actions: right-click the project > Run Maven >
+  "Fraud: Worker" / "Fraud: Train" / "Fraud: List fraud rows" /
+  "Fraud: Screen row 1 (fraud)" / "Fraud: Pending cases".
+  The default Run action (F6) starts the worker.
+  If new actions don't show up, close and reopen the project so
+  NetBeans reloads this file.
+-->
+<actions>
+
+    <action>
+        <actionName>run</actionName>
+        <packagings>
+            <packaging>jar</packaging>
+        </packagings>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:exec</goal>
+        </goals>
+        <properties>
+            <exec.vmArgs></exec.vmArgs>
+            <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
+            <exec.appArgs>worker</exec.appArgs>
+            <exec.mainClass>com.example.fraud.FraudDetectionApp</exec.mainClass>
+            <exec.executable>java</exec.executable>
+        </properties>
+    </action>
+
+    <action>
+        <actionName>CUSTOM-fraud-worker</actionName>
+        <displayName>Fraud: Worker</displayName>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:exec</goal>
+        </goals>
+        <properties>
+            <exec.vmArgs></exec.vmArgs>
+            <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
+            <exec.appArgs>worker</exec.appArgs>
+            <exec.mainClass>com.example.fraud.FraudDetectionApp</exec.mainClass>
+            <exec.executable>java</exec.executable>
+        </properties>
+    </action>
+
+    <action>
+        <actionName>CUSTOM-fraud-train</actionName>
+        <displayName>Fraud: Train</displayName>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:exec</goal>
+        </goals>
+        <properties>
+            <exec.vmArgs></exec.vmArgs>
+            <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
+            <exec.appArgs>train</exec.appArgs>
+            <exec.mainClass>com.example.fraud.FraudDetectionApp</exec.mainClass>
+            <exec.executable>java</exec.executable>
+        </properties>
+    </action>
+
+    <action>
+        <actionName>CUSTOM-fraud-frauds</actionName>
+        <displayName>Fraud: List fraud rows</displayName>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:exec</goal>
+        </goals>
+        <properties>
+            <exec.vmArgs></exec.vmArgs>
+            <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
+            <exec.appArgs>frauds</exec.appArgs>
+            <exec.mainClass>com.example.fraud.FraudDetectionApp</exec.mainClass>
+            <exec.executable>java</exec.executable>
+        </properties>
+    </action>
+
+    <action>
+        <actionName>CUSTOM-fraud-screen-1</actionName>
+        <displayName>Fraud: Screen row 1 (fraud)</displayName>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:exec</goal>
+        </goals>
+        <properties>
+            <exec.vmArgs></exec.vmArgs>
+            <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
+            <exec.appArgs>screen 1</exec.appArgs>
+            <exec.mainClass>com.example.fraud.FraudDetectionApp</exec.mainClass>
+            <exec.executable>java</exec.executable>
+        </properties>
+    </action>
+
+    <action>
+        <actionName>CUSTOM-fraud-pending</actionName>
+        <displayName>Fraud: Pending cases</displayName>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:exec</goal>
+        </goals>
+        <properties>
+            <exec.vmArgs></exec.vmArgs>
+            <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
+            <exec.appArgs>pending</exec.appArgs>
+            <exec.mainClass>com.example.fraud.FraudDetectionApp</exec.mainClass>
+            <exec.executable>java</exec.executable>
+        </properties>
+    </action>
+
+</actions>
