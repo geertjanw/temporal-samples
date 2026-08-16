@@ -1,50 +1,62 @@
 # Temporal Samples
 
-A collection of quickstart projects demonstrating [Temporal](https://temporal.io) —
-a durable execution platform for building reliable, fault-tolerant workflows —
-in a variety of practical scenarios.
+A collection of small, self-contained **Java/Maven** projects, each demonstrating how [Temporal](https://temporal.io) (durable workflow orchestration) combines with another technology or solves a specific problem. Every sample runs standalone and follows the same structure, so once you've read one, you can navigate them all.
 
 ## Samples
 
-| Sample | Description |
-|---|---|
-| [dash0-quickstart](./dash0-quickstart) | Instrumenting Temporal workflows with OpenTelemetry and sending traces, metrics, and logs to [Dash0](https://www.dash0.com) for observability. |
-| [duckdb-quickstart](./duckdb-quickstart) | Using Temporal workflows to orchestrate data processing and analytics with [DuckDB](https://duckdb.org). |
-| [fraud-detection-quickstart](./fraud-detection-quickstart) | A fraud detection pipeline built on Temporal, showing how to model multi-step transaction screening as a durable workflow. |
-| [sensor-quickstart](./sensor-quickstart) | Processing sensor/IoT data streams with Temporal, handling ingestion and long-running monitoring reliably. |
+| Sample | Combines Temporal with | What it demonstrates |
+|--------|------------------------|----------------------|
+| [`shiro-quickstart`](shiro-quickstart/) | **Apache Shiro** | Per-user authentication and authorization in durable workflows: edge login gates workflow starts, activities re-check permissions at execution time, denials fail non-retryably. |
+| [`fraud-detection-sample`](fraud-detection-sample/) | *\<fill in: e.g. rules engine / ML scoring\>* | *\<fill in: one sentence on the fraud-detection scenario\>* |
+
+<!-- Add new samples as rows here, keeping descriptions to one sentence. -->
 
 ## Prerequisites
 
-- A local Temporal server — the easiest option is the
-  [Temporal CLI](https://docs.temporal.io/cli):
+- **JDK 17+** and **Maven 3.8+**
+- Optional, for the Web UI: the [Temporal CLI](https://docs.temporal.io/cli) (macOS: `brew install temporal`)
+
+## Running a sample
+
+Every sample supports the same two modes:
+
+**Quick mode (default)** — runs against Temporal's in-process test server; nothing to install, but no Web UI:
 
 ```bash
-  temporal server start-dev
+cd <sample-directory>
+mvn compile exec:java
 ```
 
-  This starts a dev server with the Web UI at http://localhost:8233.
-
-## Getting Started
-
-Each sample is self-contained. Navigate into a sample directory and follow the
-instructions in its README:
+**Server mode** — runs against a real local Temporal server so executions are visible in the Web UI. In one terminal:
 
 ```bash
-cd fraud-detection-quickstart
+temporal server start-dev
 ```
 
-In general, each quickstart involves:
+(add `--db-filename temporal.db` to keep history across restarts), then in another:
 
-1. Starting a **worker** that hosts the workflow and activity implementations.
-2. Running a **starter** (or sending a request) that kicks off a workflow execution.
-3. Observing the workflow in the Temporal Web UI.
+```bash
+cd <sample-directory>
+mvn compile exec:java -Dtemporal.mode=server
+```
 
-## Learn More
+and open http://localhost:8233.
 
-- [Temporal Documentation](https://docs.temporal.io)
-- [Temporal SDKs](https://docs.temporal.io/dev-guide)
-- [Official temporalio/samples repositories](https://github.com/temporalio)
+Samples include an `nbactions.xml`, so in **Apache NetBeans** plain *Run Project (F6)* runs quick mode, and *Run Maven → Run (Temporal server + Web UI)* runs server mode.
+
+## Structure of every sample
+
+Each sample directory contains a `README.md` with the same sections, in the same order:
+
+1. **Title + one-liner** — what it combines/demonstrates
+2. **Why this sample?** — the problem and why the combination is useful
+3. **How it works** — architecture, key classes, demo users/config
+4. **Run** — quick mode and server mode commands
+5. **What you'll see** — expected console output and Web UI results
+6. **Going to production** — what to change for real deployments
+
+New samples should start from [`SAMPLE_README_TEMPLATE.md`](SAMPLE_README_TEMPLATE.md).
 
 ## License
 
-See individual samples for license information.
+<!-- fill in: e.g. Apache License 2.0 -->
