@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.example</groupId>
+  <artifactId>shiro-temporal-demo</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <temporal.version>1.25.2</temporal.version>
+    <shiro.version>2.0.1</shiro.version>
+  </properties>
+
+  <dependencies>
+    <!-- Apache Shiro: authentication + authorization -->
+    <dependency>
+      <groupId>org.apache.shiro</groupId>
+      <artifactId>shiro-core</artifactId>
+      <version>${shiro.version}</version>
+    </dependency>
+
+    <!-- Temporal SDK: workflows + activities -->
+    <dependency>
+      <groupId>io.temporal</groupId>
+      <artifactId>temporal-sdk</artifactId>
+      <version>${temporal.version}</version>
+    </dependency>
+
+    <!-- In-process Temporal test server so the demo runs without Docker.
+         For a real deployment, remove this and connect WorkflowServiceStubs
+         to a running Temporal server instead. -->
+    <dependency>
+      <groupId>io.temporal</groupId>
+      <artifactId>temporal-testing</artifactId>
+      <version>${temporal.version}</version>
+    </dependency>
+
+    <!-- Simple logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>2.0.13</version>
+    </dependency>
+
+    <!-- Shiro 2.x uses commons-beanutils for INI parsing, which requires
+         commons-logging at runtime but excludes it transitively. This bridge
+         provides the commons-logging API and routes it through SLF4J. -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>2.0.13</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <mainClass>com.example.App</mainClass>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
