@@ -2,6 +2,8 @@
 
 Combines the **Deep Netts** neural network from [deepnetts/CreditCardFraudDetection](https://github.com/deepnetts/CreditCardFraudDetection) with **[Temporal.io](https://temporal.io)** durable workflows, in a single Java source file.
 
+https://github.com/user-attachments/assets/c7632c00-f7f6-4edc-8666-852f1061ab24
+
 ## Why this sample?
 
 Fraud detection is a pipeline with two awkward properties: model training is a long-running job that shouldn't restart from scratch when a worker dies, and flagged transactions need a *human* decision that may take hours or days. Both are exactly what durable workflows are for:
