@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>petclinic</groupId>
+    <artifactId>petclinic-reminder-quickstart</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>PetClinic Reminder Quickstart</name>
+    <description>Durable appointment reminders in Java with Temporal — a durable timer that survives restarts.</description>
+
+    <properties>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <temporal.version>1.31.0</temporal.version>
+        <!-- Default main is the Worker. Override on the CLI to run the Starter:
+             mvn exec:java -Dexec.mainClass=petclinic.reminder.BookVisit -->
+        <exec.mainClass>petclinic.reminder.ReminderWorker</exec.mainClass>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.temporal</groupId>
+            <artifactId>temporal-sdk</artifactId>
+            <version>${temporal.version}</version>
+        </dependency>
+        <!-- JDBC drivers: the bridge reads PetClinic's database (PetClinic itself is
+             unmodified; this is how the quickstart interacts with it). Postgres is the
+             recommended shared DB; H2 (TCP server mode) is a Docker-free alternative that
+             lets a single machine share PetClinic's DB with the bridge. -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.4.240</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <!-- No <mainClass> here: an explicit configuration value would win over
+                     -Dexec.mainClass. The default comes from the exec.mainClass property
+                     above, which the CLI can override. -->
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
