@@ -3,3 +3,6 @@ book/
 .claude/
 .DS_Store
 /shiro-quickstart/target/
+/sensor-quickstart/target/
+/pet-clinic/
+/petclinic-reminder-quickstart/target/
