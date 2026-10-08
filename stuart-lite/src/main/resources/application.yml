@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: stuart-lite
+
+  # Spring AI: OpenAI-compatible API. The article routes through OpenRouter so models are swappable.
+  ai:
+    openai:
+      api-key: ${OPENROUTER_API_KEY:${OPENAI_API_KEY:}}
+      base-url: ${LLM_BASE_URL:https://openrouter.ai/api}
+      chat:
+        options:
+          model: ${LLM_MODEL:anthropic/claude-sonnet-4.5}
+          temperature: 0.2
+
+  # Temporal: connect to a local dev server (`temporal server start-dev`)
+  temporal:
+    connection:
+      target: ${TEMPORAL_TARGET:127.0.0.1:7233}
+    namespace: default
+    workers-auto-discovery:
+      packages:
+        - com.example.stuart
+
+stuart:
+  workspace-root: ${STUART_WORKSPACES:${java.io.tmpdir}/stuart-workspaces}
+  git-push: false                 # true = push the branch to the remote "origin"
+  token-budget-per-phase: 400000  # hard stop for a single phase (prompt + completion tokens, cumulative)
+  input-price-per-million: 3.00   # USD, only used for the budget table
+  output-price-per-million: 15.00
