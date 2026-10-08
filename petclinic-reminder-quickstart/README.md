@@ -96,7 +96,7 @@ PetClinic (unmodified)  ──writes visits──▶  Postgres  ◀──polls�
                                                                               ReminderWorker ──runs timer/activity─┘
 ```
 
-Connection defaults to PetClinic's shipped Postgres (`jdbc:postgresql://localhost/petclinic`, user/pass `petclinic`); override with `POSTGRES_URL`, `POSTGRES_USER`, `POSTGRES_PASS`.
+Connection defaults to PetClinic's shipped Postgres (`jdbc:postgresql://localhost/petclinic`, user/pass `petclinic`); override with `POSTGRES_URL`, `POSTGRES_USER`, `POSTGRES_PASS`. The bridge also bundles the H2 driver, so the same env vars work for the Docker-free H2 setup below (the JDBC URL selects the driver).
 
 ### Run the integrated stack
 
@@ -132,9 +132,44 @@ mvn compile exec:java
 mvn compile exec:java -Dexec.mainClass=petclinic.reminder.PetClinicBridge
 ```
 
-Now open PetClinic at <http://localhost:8080>, book a visit for an owner's pet, and within ~5 seconds the bridge starts its reminder Workflow — visible in the Worker terminal and the Temporal Web UI at <http://localhost:8233>.
+### Docker-free alternative: a shared H2 server
 
-## From bridge to embedded (production shape)
+No Docker or Postgres? Run the shared database as an **H2 TCP server**. PetClinic already ships the H2 driver, and this module bundles it too, so the whole stack runs with nothing to install beyond the H2 jar (which Maven already downloaded for PetClinic).
+
+Steps 2 (Temporal) and 3 (Worker) are unchanged. Replace steps 1, 4, and 5 with:
+
+**1. Start an H2 TCP server** holding a shared database file. The jar is in your local Maven repo (adjust the version to match PetClinic's):
+
+```bash
+java -cp ~/.m2/repository/com/h2database/h2/2.4.240/h2-2.4.240.jar \
+  org.h2.tools.Server -tcp -tcpPort 9092 -ifNotExists
+```
+
+**4. PetClinic against the shared H2 server** — runtime configuration only, no file changes. Pass the datasource via environment variables (they avoid the argument-splitting that mangles the JDBC URL when passed through `-Dspring-boot.run.arguments`):
+
+```bash
+SPRING_DATASOURCE_URL="jdbc:h2:tcp://localhost:9092//tmp/petclinic-shared" \
+SPRING_DATASOURCE_USERNAME=petclinic \
+SPRING_DATASOURCE_PASSWORD=petclinic \
+SPRING_SQL_INIT_MODE=always \
+./mvnw spring-boot:run
+```
+
+`SPRING_SQL_INIT_MODE=always` is required: Spring Boot only runs `schema.sql`/`data.sql` for *embedded* datasources by default, and an H2 *TCP* connection counts as non-embedded, so without it the shared database comes up empty.
+
+**5. The bridge**, pointed at the same H2 server:
+
+```bash
+POSTGRES_URL="jdbc:h2:tcp://localhost:9092//tmp/petclinic-shared" \
+POSTGRES_USER=petclinic POSTGRES_PASS=petclinic \
+mvn compile exec:java -Dexec.mainClass=petclinic.reminder.PetClinicBridge
+```
+
+### Either way
+
+Open PetClinic at <http://localhost:8080>, book a visit for an owner's pet, and within ~5 seconds the bridge starts its reminder Workflow — visible in the Worker terminal and the Temporal Web UI at <http://localhost:8233>. PetClinic also seeds a few visits on startup, so the bridge schedules reminders for those immediately.
+
+## From bridge to embedded (production strategy)
 
 The bridge keeps PetClinic pristine, which is ideal for a demo you don't own. If you *do* own the app, the tighter integration is to start the Workflow inline:
 

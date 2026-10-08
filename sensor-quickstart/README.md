@@ -1,4 +1,4 @@
-# Hello World Crash Recovery in Java
+# Sensor Quickstart
 
 The simplest **Temporal**-based crash-recovery scenario in Java, in a single file — a starting point for anyone new to Temporal, showing crash recovery with no save/load code of your own.
 
